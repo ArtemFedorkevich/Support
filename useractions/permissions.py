@@ -8,9 +8,12 @@ class IsAuthenticatedAndOwner(permissions.BasePermission):
     message = 'You must be the owner of this object.'
 
     def has_permission(self, request, view):
-        question = request.data.get('question', {})
-        result = dict(question)
-        data = Problem.objects.get(pk=result['title_id'])
+        if list(request.data) == []:
+            return request.user.is_authenticated
+        else:
+            question = request.data.get('question', {})
+            result = dict(question)
+            data = Problem.objects.get(pk=result['title_id'])
         return request.user.id == data.owner_id and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):

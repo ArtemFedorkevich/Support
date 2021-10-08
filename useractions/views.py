@@ -14,6 +14,7 @@ from rest_framework import viewsets
 
 from django.shortcuts import get_object_or_404
 
+
 class PostList(viewsets.ViewSet):
     queryset = Problem.objects.all()
 
@@ -73,16 +74,25 @@ class PostList(viewsets.ViewSet):
 class PostDetailList(viewsets.ViewSet):
     serializer_class = PostDetailSerializer
     queryset = ProblemDetail.objects.all()
-    permission_classes = (IsAuthenticated,)
+
+    def get_permissions(self):
+        if self.request.method in ('GET'):
+            self.permission_classes = (IsAuthenticated,)
+        elif self.request.method in ('POST'):
+            self.permission_classes = (IsAuthenticatedAndOwner,)
+        else:
+            self.permission_classes = (IsAuthenticated, IsAdminUser,)
+
+        return super().get_permissions()
+
     def list(self, request):
         serializer_class = PostDetailSerializer(self.queryset, many=True)
 
         return Response(serializer_class.data)
 
     def create(self, request):
-        self.permission_classes=(IsAuthenticatedAndOwner,)
         question = request.data.get('question', {})
-        result=dict(question)
+        result = dict(question)
         data_problem = Problem.objects.get(pk=result['title_id'])
         serializer = self.serializer_class(data=question)
         serializer.is_valid(raise_exception=True)
@@ -100,7 +110,6 @@ class PostDetailList(viewsets.ViewSet):
         return Response(serializer_class.data)
 
     def partial_update(self, request, pk):
-        self.permission_classes = (IsAdminUser,)
         serializer_class = PostDetailSerializerStaff
         detail = ProblemDetail.objects.get(pk=pk)
         print(dict(request.data))
@@ -109,5 +118,3 @@ class PostDetailList(viewsets.ViewSet):
             serializer.save()
 
         return Response(serializer.data)
-
-

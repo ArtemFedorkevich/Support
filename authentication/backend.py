@@ -4,7 +4,7 @@ from django.conf import settings
 
 from rest_framework import authentication, exceptions
 
-from .models import User
+from authentication.models import User
 
 
 class JWTAuthentication(authentication.BaseAuthentication):
@@ -24,7 +24,7 @@ class JWTAuthentication(authentication.BaseAuthentication):
         auth_header = authentication.get_authorization_header(request).split()
         auth_header_prefix = self.authentication_header_prefix.lower()
 
-        #Exactly two elements must be transmitted
+        # Exactly two elements must be transmitted
         if not auth_header:
             return None
 

@@ -1,9 +1,9 @@
-from django.urls import path
+from authentication.urls import router
 
-from . import views
 
+# This routher add paths to routher form authentication.urls
+from useractions import views
+router.register(r'problems', views.PostList)
+router.register(r'problemindetail', views.PostDetailList)
+urlpatterns = router.urls
 app_name = 'useractions'
-urlpatterns = [
-    path('problems/', views.PostList.as_view()),
-    path('problemindetail/<int:pk>/', views.PostDetailList.as_view()),
-]

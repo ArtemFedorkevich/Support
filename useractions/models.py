@@ -1,8 +1,9 @@
 from django.db import models
+
 from django.conf import settings
 
 
-# Model forcreation of problems
+# Model for creation of problems
 class Problem(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100, blank=True, default='')
@@ -25,6 +26,3 @@ class ProblemDetail(models.Model):
 
     class Meta:
         ordering = ['id']
-
-    def __str__(self):
-        return self.title
